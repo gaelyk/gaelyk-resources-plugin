@@ -1,5 +1,32 @@
+/*
+* Copyright 2012 the original author or authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package groovyx.gaelyk.resources
 
+/**
+ * This class helps finding the proper MIME type based of the extension of the path.
+ * The extension is taken as the part of the path from the last period to the end of the
+ * string.
+ * 
+ * You can add or override mimetypes calling the {@link MimeTypes#addType(String, String)}
+ * method for example in your plugin descriptor.
+ * 
+ * @author Vladimir Orany
+ *
+ */
 class MimeTypes {
 	
 	static types = [
@@ -623,6 +650,11 @@ class MimeTypes {
 
 	static final String DEFAULT_TYPE = 'application/octet-stream'
 	
+	/**
+	 * Finds the MIME type by the file extension.
+	 * @param extension the file extension to query for the MIME type
+	 * @return the mime type for given file extension or 'application/octet-stream' if not found
+	 */
 	static String getTypeByExt(String extension){
 		String ext = extension
 		if(!ext){
@@ -634,6 +666,12 @@ class MimeTypes {
 		return types[ext] ?: DEFAULT_TYPE
 	}
 	
+	/**
+	 * Finds the MIME type by given path.
+	 * Threats the text from last period to end of the path as the file extension.
+	 * @param path the path of the resource
+	 * @return  mime type for given path or 'application/octet-stream' if not found
+	 */
 	static String getTypeByFile(String path){
 		if(!path){
 			return DEFAULT_TYPE
@@ -641,6 +679,12 @@ class MimeTypes {
 		getTypeByExt path[path.lastIndexOf('.')..-1]
 	}
 	
+	/**
+	 * Adds new MIME type to the MIME types map.
+	 * @param extension	file extension for given MIME type
+	 * @param type the MIME type
+	 * @return the old MIME type associated with given extensions or <code>null</code>
+	 */
 	static addType(String extension, String type){
 		String ext = extension
 		if(!ext || !type){
