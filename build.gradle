@@ -1,0 +1,138 @@
+
+def gitHub = {
+	def resolver = new org.apache.ivy.plugins.resolver.URLResolver()
+
+	resolver.with {
+		name = 'GitHub'
+		addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
+	}
+
+	resolver
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'signing'
+apply plugin: 'maven'
+
+def pluginName = "gaelyk-resources"
+version = "0.1-SNAPSHOT"
+group = 'org.gaelyk'
+
+repositories {
+	mavenCentral()
+	mavenRepo(name: 'sonatype-snapshots', urls: [
+		'https://oss.sonatype.org/content/repositories/snapshots'
+	])
+	add gitHub()
+}
+
+dependencies {
+	def gaeVersion = '1.6.2.1'
+	def isChanging = { changing = true }
+	groovy 'org.codehaus.groovy:groovy-all:1.8.6'
+	compile "com.google.appengine:appengine-api-1.0-sdk:$gaeVersion",
+			"com.google.appengine:appengine-api-labs:$gaeVersion"
+	compile	'org.gaelyk:gaelyk:1.2-SNAPSHOT', isChanging
+
+	testCompile 'org.spockframework:spock-core:0.5-groovy-1.8', {
+		exclude group: 'org.codehaus.groovy', name: 'groovy-all'
+	}
+
+	testCompile 'marcoVermeulen:gaelyk-spock:0.1.1',
+			"com.google.appengine:appengine-api-stubs:$gaeVersion",
+			"com.google.appengine:appengine-testing:$gaeVersion",
+			'javax.servlet:servlet-api:2.5',
+			'cglib:cglib-nodep:2.2',
+			'org.objenesis:objenesis:1.2'
+			
+	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
+}
+
+
+jar {
+	baseName pluginName
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	baseName = pluginName
+	from "${project.docsDir}/javadoc"
+	classifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar) {
+	baseName = pluginName
+	from sourceSets.main.allSource
+	classifier = 'sources'
+}
+
+artifacts {
+	archives jar
+	archives javadocJar
+	archives sourcesJar
+}
+
+signing {
+	sign configurations.archives
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+
+			def auth = {
+			  authentication(userName: sonatypeUsername, password: sonatypePassword)
+			}
+
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/", auth)
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots", auth)
+
+
+			pom.project {
+			   name 'Gaelyk Resources Plugin'
+			   packaging 'jar'
+			   description 'Gaelyk Resources Plugin allows other binary plugin to provide additoinal static resources.'
+			   url 'https://github.com/musketyr/gaelyk-resources-plugin'
+
+			   scm {
+				   url 'scm:git@github.com:musketyr/gaelyk-resources-plugin.git'
+				   connection 'scm:git@github.com:musketyr/gaelyk-resources-plugin.git'
+				   developerConnection 'scm:git@github.com:musketyr/gaelyk-resources-plugin.git'
+			   }
+
+			   licenses {
+				   license {
+					   name 'The Apache Software License, Version 2.0'
+					   url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					   distribution 'repo'
+				   }
+			   }
+
+			   developers {
+				   developer {
+					   id 'vladimirorany'
+					   name 'Vladimir Orany'
+				   }
+			   }
+		   }
+
+		   //mess with the generated pom to set the 'packaging' tag
+		   pom.withXml { XmlProvider xmlProvider ->
+			   def xml = xmlProvider.asString()
+			   def pomXml = new XmlParser().parse(new ByteArrayInputStream(xml.toString().bytes))
+
+			   pomXml.version[0] + { packaging('jar') }
+
+			   def newXml = new StringWriter()
+			   def printer = new XmlNodePrinter(new PrintWriter(newXml))
+			   printer.preserveWhitespace = true
+			   printer.print(pomXml)
+			   xml.setLength(0)
+			   xml.append(newXml.toString())
+		   }
+		}
+	}
+}
+
