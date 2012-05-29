@@ -5,8 +5,8 @@ import spock.lang.Unroll;
 
 class MimeTypesTest extends Specification {
 	
-	@Unroll({ "Ext $ext belongs to $mime"})
-	def "Random mimes test"(){
+	@Unroll
+	def  "Ext #ext belongs to #mime"(){
 		expect:
 		mime == MimeTypes.getTypeByExt(ext)
 		where:
@@ -15,8 +15,8 @@ class MimeTypesTest extends Specification {
 		'exe'	| 'application/octet-stream'
 	}
 	
-	@Unroll({ "File $file is $mime"})
-	def "Random files mimes test"(){
+	@Unroll
+	def "File #file is #mime"(){
 		expect:
 		mime == MimeTypes.getTypeByFile(file)
 		where:

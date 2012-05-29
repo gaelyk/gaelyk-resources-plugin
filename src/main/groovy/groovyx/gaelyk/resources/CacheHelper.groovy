@@ -57,6 +57,9 @@ class CacheHelper {
 	 * @return the time when the file in the jar was modified (e.g. time when the jar was build)
 	 */
 	static long getLastModified(URL url){
+        if(!url){
+            return lastDeployment;
+        }
 		try {
 			JarFile jarFile = new JarFile(new File(getJarFilePath(url)))
 			JarEntry entry = jarFile.getJarEntry(getJarEntryName(url))

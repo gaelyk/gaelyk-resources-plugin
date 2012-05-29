@@ -5,20 +5,9 @@ import groovyx.gaelyk.plugins.PluginsHandler;
 
 class ServerGroovletSpec extends PluginGroovletSpec {
 
-	String getGroovletName() { 'server.groovy' }
+	String getGroovletName() { 'groovyx/gaelyk/resources/server.groovy' }
 	
 	def setup(){
-		PluginsHandler.instance.scriptContent = { String path ->
-			switch (path) {
-			case "WEB-INF/plugins.groovy":
-				return "install test"
-			case "META-INF/gaelyk-plugins/test.groovy":
-				return "//some text"
-			default:
-				return ''
-			}
-		}
-		PluginsHandler.instance.initPlugins()
 		groovletInstance.request.getDateHeader = { 0 }
 	}
 	
@@ -37,15 +26,14 @@ class ServerGroovletSpec extends PluginGroovletSpec {
 		
 		where:
 		output						| params
-		"Hello world"				| [plugin: "test", path: "test.txt"]
-		"File not found!"			| [plugin: "test", path: "text.txt"]
-		"Missing plugin definition!"| [path: "text.txt"]
-		"Path not defined!"			| [plugin: "test"]
+		"Hello world"				| [path: "test.txt"]
+		"File not found!"			| [path: "text.txt"]
+		"Path not defined!"			| []
 	}
 	
 	def "Serve file with right mime type"(){
 		when:
-		groovletInstance.params = [plugin: "test", path: "test.txt"]
+		groovletInstance.params = [path: "test.txt"]
 		
 		use(GaelykCategory){
 			groovletInstance.get()

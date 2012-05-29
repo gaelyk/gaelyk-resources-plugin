@@ -3,7 +3,7 @@ package groovyx.gaelyk.resources
 import groovyx.gaelyk.spock.GroovletMockLogger;
 
 class PluginGroovletUnderSpec {
-	static final LOCATION = "src/main/resources/META-INF/gaelyk-plugins/groovy"
+	static final LOCATION = "src/main/webapp/WEB-INF/groovy/"
 
 	def gse = new GroovyScriptEngine(LOCATION)
 	def binding = new Binding()
