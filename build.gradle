@@ -1,4 +1,10 @@
 buildscript {
+    
+    repositories {
+        mavenCentral()
+
+    }
+    
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.3.2'
         classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7'
@@ -8,7 +14,6 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
-apply plugin: 'signing'
 apply plugin: 'maven'
 apply plugin: 'gae'
 apply plugin: 'gaelyk'
@@ -19,7 +24,6 @@ group = 'org.gaelyk'
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 }
 
 dependencies {
@@ -34,8 +38,8 @@ dependencies {
 	testCompile 'org.gaelyk:gaelyk-spock:0.3.0.1', {
         exclude group: 'com.google.appengine'
     }
-	testCompile "com.google.appengine:appengine-api-stubs:$gaeVersion",
-	testCompile "com.google.appengine:appengine-testing:$gaeVersion",
+	testCompile "com.google.appengine:appengine-api-stubs:$gaeVersion"
+	testCompile "com.google.appengine:appengine-testing:$gaeVersion"
 
 			
 	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
@@ -59,27 +63,32 @@ task sourcesJar(type: Jar) {
 }
 
 configurations {
-    plugin
+    gaelykPlugin
 }
 
 artifacts {
-	plugin jar
-	plugin javadocJar
-	plugin sourcesJar
+	gaelykPlugin jar
+	gaelykPlugin javadocJar
+	gaelykPlugin sourcesJar
 }
 
 
 
 if(hasProperty('sonatypeUsername') && hasProperty('sonatypePassword')){
 
+    apply plugin: 'signing'
+    
 	signing {
-		sign configurations.plugin
+		sign configurations.gaelykPlugin
 	}
 	
-	uploadPlugin {
+	uploadGaelykPlugin {
 		repositories {
 			mavenDeployer {
-				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                
+				beforeDeployment { MavenDeployment deployment -> 
+                    signing.signPom(deployment)
+                }
 	
 				def auth = {
 				  authentication(userName: sonatypeUsername, password: sonatypePassword)
@@ -134,6 +143,9 @@ if(hasProperty('sonatypeUsername') && hasProperty('sonatypePassword')){
 			}
 		}
 	}
+    
+	uploadGaelykPlugin.dependsOn signGaelykPlugin
 }
 
 jar.enabled = true
+
