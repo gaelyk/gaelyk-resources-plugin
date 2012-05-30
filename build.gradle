@@ -19,7 +19,7 @@ apply plugin: 'gae'
 apply plugin: 'gaelyk'
 
 def pluginName = "gaelyk-resources"
-version = "0.1.1"
+version = "0.1.2-SNAPSHOT"
 group = 'org.gaelyk'
 
 repositories {
@@ -63,7 +63,7 @@ task sourcesJar(type: Jar) {
 }
 
 configurations {
-    gaelykPlugin
+    gaelykPlugin.extendsFrom signatures
 }
 
 artifacts {
