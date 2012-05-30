@@ -3,6 +3,20 @@
 [Gaelyk](http://gaelyk.appspot.com) Resources Plugin serves static resources packed inside
 [Gaelyk's](http://gaelyk.appspot.com) binary plugins.  
 
+#Installation
+
+The plugin is distributed using Maven Central as `org.gaelyk:gaelyk-resources:1.1`. 
+To install the plugin declare it as `compile` dependency in the Gradle build file.
+
+```
+  dependencies {
+     ...
+     compile 'org.gaelyk:gaelyk-resources:1.1'
+     ...
+  }
+```
+
+
 ## Accessing plugin files
 Any files packed in `resources` folder
 of JARed binary plugin are served under `/gpr/<resourcePath>` URL of your application. 
