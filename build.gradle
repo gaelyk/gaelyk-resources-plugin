@@ -5,7 +5,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1'
+        classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1', {
+            exclude group: 'eu.appsatori', module: 'gradle-fatjar-plugin'
+        }
         classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7.6', {
             exclude group: 'eu.appsatori', module: 'gradle-fatjar-plugin'
         }
