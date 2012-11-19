@@ -6,7 +6,9 @@ buildscript {
 
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1'
-        classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7.6'
+        classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7.6', {
+            exclude group: 'eu.appsatori', module: 'gradle-fatjar-plugin'
+        }
     }
 }
 
@@ -48,6 +50,10 @@ dependencies {
 	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
 }
 
+gaelyk {
+    rad = false
+}
+
 
 jar {
 	baseName pluginName
@@ -76,7 +82,7 @@ artifacts {
 }
 
 boolean signingEnabled = !hasProperty('skipSigning') || skipSigning != 'true'
-
+println "Signing is ${signingEnabled ? 'enabled' : 'disabled'}"
 
 if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
     if(signingEnabled){
