@@ -27,8 +27,12 @@ repositories {
 
 dependencies {
 	groovy "org.codehaus.groovy:groovy-all:${ext.gaelykGroovyVersion}"
-	compile	"org.gaelyk:gaelyk:${ext.gaelykLatestVersion}"
-	testCompile "org.gaelyk:gaelyk-spock:${ext.gaelykSpockLatestVersion}"
+	compile	"org.gaelyk:gaelyk:${ext.gaelykLatestVersion}", {
+        changing = true
+    }
+	testCompile "org.gaelyk:gaelyk-spock:${ext.gaelykSpockLatestVersion}", {
+        changing = true
+    }
     gaeSdk "com.google.appengine:appengine-java-sdk:${ext.gaelykAppEngineVersion}"
     
 	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
@@ -87,6 +91,7 @@ if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
 				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots", auth)
 
 
+                configure(project, modifyPom)
 				pom.project {
 				   name 'Gaelyk Resources Plugin'
 				   packaging 'jar'
