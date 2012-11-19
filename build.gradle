@@ -90,8 +90,6 @@ if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
 				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/", auth)
 				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots", auth)
 
-
-                configure(project, modifyPom)
 				pom.project {
 				   name 'Gaelyk Resources Plugin'
 				   packaging 'jar'
