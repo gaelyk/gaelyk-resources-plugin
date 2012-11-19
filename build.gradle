@@ -148,8 +148,9 @@ if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
 			}
 		}
 	}
-
-	uploadGaelykPlugin.dependsOn signGaelykPlugin
+    if(signingEnabled){
+        uploadGaelykPlugin.dependsOn signGaelykPlugin        
+    }
 }
 
 jar.enabled = true
