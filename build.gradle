@@ -75,22 +75,25 @@ artifacts {
 	gaelykPlugin sourcesJar
 }
 
+boolean signingEnabled = !hasProperty('skipSigning') || skipSigning != 'true'
 
 
 if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
-
-    apply plugin: 'signing'
-
-	signing {
-		sign configurations.gaelykPlugin
-	}
+    if(signingEnabled){
+        apply plugin: 'signing'
+            
+        signing {
+            sign configurations.gaelykPlugin
+        }
+    }
 
 	uploadGaelykPlugin {
 		repositories {
 			mavenDeployer {
-
-				beforeDeployment { MavenDeployment deployment ->
-                    signing.signPom(deployment)
+                if(signingEnabled){
+                    beforeDeployment { MavenDeployment deployment ->
+                        signing.signPom(deployment)
+                    }                    
                 }
 
 				def auth = {
