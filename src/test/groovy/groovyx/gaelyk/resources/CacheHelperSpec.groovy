@@ -1,8 +1,6 @@
 package groovyx.gaelyk.resources
 
-import groovyx.gaelyk.plugins.PluginResourceSupport;
-import groovyx.gaelyk.plugins.PluginsHandler;
-import groovyx.gaelyk.spock.GaelykUnitSpec;
+import groovyx.gaelyk.spock.GaelykUnitSpec
 import spock.lang.Specification
 
 class CacheHelperSpec extends GaelykUnitSpec {

@@ -16,10 +16,9 @@
 
  package groovyx.gaelyk.resources
 
-import java.text.SimpleDateFormat;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipException;
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
+import java.util.zip.ZipException
 
 /**
  * Utility class for better caching of the resources.

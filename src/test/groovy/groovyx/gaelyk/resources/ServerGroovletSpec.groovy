@@ -1,7 +1,6 @@
 package groovyx.gaelyk.resources
 
-import groovyx.gaelyk.GaelykCategory;
-import groovyx.gaelyk.plugins.PluginsHandler;
+import groovyx.gaelyk.plugins.PluginsHandler
 
 class ServerGroovletSpec extends PluginGroovletSpec {
 
@@ -15,9 +14,7 @@ class ServerGroovletSpec extends PluginGroovletSpec {
 		when:
 		groovletInstance.params = params
 		
-		use(GaelykCategory){
-			groovletInstance.get()
-		}
+		groovletInstance.get()
 		
 		String result = sout.toString()
 		
@@ -34,10 +31,7 @@ class ServerGroovletSpec extends PluginGroovletSpec {
 	def "Serve file with right mime type"(){
 		when:
 		groovletInstance.params = [path: "test.txt"]
-		
-		use(GaelykCategory){
-			groovletInstance.get()
-		}
+		groovletInstance.get()
 		
 		String result = sout.toString()
 		
