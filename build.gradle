@@ -5,25 +5,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1', {
-            exclude group: 'eu.appsatori', module: 'gradle-fatjar-plugin'
-        }
-        classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7.6', {
-            exclude group: 'eu.appsatori', module: 'gradle-fatjar-plugin'
-        }
+        classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1'
+        classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7.6'
     }
 }
 
 apply from: 'https://raw.github.com/gaelyk/gaelyk/groovy2/common.gradle'
-
-
-/**
- * http://evgeny-goldin.com/wiki/Gradle-CodeNarc-plugin
- */
-ext.codenarcPriority1Violations = 0     // Work
-ext.codenarcPriority2Violations = 227   // in
-ext.codenarcPriority3Violations = 983   // progress ..
-apply from: 'https://raw.github.com/gaelyk/gaelyk/groovy2/common-codenarc-ci.gradle'
 
 
 apply plugin: 'maven'
@@ -52,8 +39,8 @@ dependencies {
 	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
 }
 
-gaelyk {
-    rad = false
+gae {
+    optimizeWar = false
 }
 
 
@@ -83,6 +70,7 @@ artifacts {
 	gaelykPlugin sourcesJar
 }
 
+
 boolean signingEnabled = !hasProperty('skipSigning') || skipSigning != 'true'
 println "Signing is ${signingEnabled ? 'enabled' : 'disabled'}"
 
@@ -93,6 +81,8 @@ if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
         signing {
             sign configurations.gaelykPlugin
         }
+        
+        uploadGaelykPlugin.dependsOn signGaelykPlugin
     }
 
 	uploadGaelykPlugin {
@@ -156,9 +146,6 @@ if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
 			}
 		}
 	}
-    if(signingEnabled){
-        uploadGaelykPlugin.dependsOn signGaelykPlugin        
-    }
 }
 
 jar.enabled = true
