@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-apply from: 'https://raw.github.com/gaelyk/gaelyk/groovy2/common.gradle'
+apply from: 'https://raw.github.com/gaelyk/gaelyk/master/common.gradle'
 
 
 apply plugin: 'maven'
