@@ -30,14 +30,15 @@ if(!path){
 
 def fileURL = getClass().getResource('/resources/' + path)
 
-long ifModifiedSince = request.getDateHeader("If-Modified-Since")
-if (ifModifiedSince) {
-    if (!CacheHelper.isModified(fileURL, ifModifiedSince)) {
-        response.sendError HttpServletResponse.SC_NOT_MODIFIED
-        response.setDateHeader("Last-Modified", ifModifiedSince)
-        return
-    }
-}
+// templorary disbaled thx to http://code.google.com/p/googleappengine/issues/detail?id=8415
+//long ifModifiedSince = request.getDateHeader("If-Modified-Since")
+//if (ifModifiedSince) {
+//    if (!CacheHelper.isModified(fileURL, ifModifiedSince)) {
+//        response.sendError HttpServletResponse.SC_NOT_MODIFIED
+//        response.setDateHeader("Last-Modified", ifModifiedSince)
+//        return
+//    }
+//}
 
 
 
