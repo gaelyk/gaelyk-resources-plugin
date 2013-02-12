@@ -7,16 +7,16 @@ buildscript {
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1'
         classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7.6'
+		classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1'
     }
 }
 
-apply from: 'https://raw.github.com/gaelyk/gaelyk/groovy2/common.gradle'
+apply from: 'https://raw.github.com/gaelyk/gaelyk/master/common.gradle'
 
 
 apply plugin: 'maven'
 apply plugin: 'gae'
 apply plugin: 'gaelyk'
-
 
 def pluginName = "gaelyk-resources"
 version = ext.gaelykLatestVersion
@@ -40,13 +40,16 @@ dependencies {
 }
 
 gae {
-    optimizeWar = false
+    optimizeWar = true
 }
 
 
 jar {
 	baseName pluginName
 }
+
+jar.dependsOn gaelykPrecompileTemplate
+jar.dependsOn gaelykPrecompileGroovlet
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
 	baseName = pluginName
