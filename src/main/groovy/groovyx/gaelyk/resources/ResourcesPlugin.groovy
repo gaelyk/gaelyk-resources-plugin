@@ -11,7 +11,7 @@ class ResourcesPlugin extends PluginBaseScript {
     
     @Override
     public Object run() {
-        firstRouteIndex = FIRST_ROUTE_INDEX
+        startRoutingAt FIRST_ROUTE_INDEX
         get "/gpr/@path", forward: "/groovyx/gaelyk/resources/server.groovy?&path=@path"
     }
 
