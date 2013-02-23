@@ -31,9 +31,10 @@ if(!path){
 }
 
 def fileURL = getClass().getResource('/resources/' + path)
+String iMSHeader = request.getHeader("If-Modified-Since")
 
-long ifModifiedSince = CacheHelper.getMillisFromHeaderDate(request.getHeader("If-Modified-Since"))
-if (ifModifiedSince) {
+if (iMSHeader) {
+    long ifModifiedSince = CacheHelper.getMillisFromHeaderDate(iMSHeader)
     if (!CacheHelper.isModified(fileURL, ifModifiedSince)) {
         response.sendError HttpServletResponse.SC_NOT_MODIFIED
         response.setHeader("Last-Modified", CacheHelper.getHeaderDateFromMillis(ifModifiedSince))
