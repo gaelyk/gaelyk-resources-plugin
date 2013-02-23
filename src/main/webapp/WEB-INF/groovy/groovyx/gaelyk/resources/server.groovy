@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 package groovyx.gaelyk.resources
- 
+
+import java.text.SimpleDateFormat
+
 import groovyx.gaelyk.resources.CacheHelper
 import groovyx.gaelyk.resources.MimeTypes
 
@@ -30,25 +32,22 @@ if(!path){
 
 def fileURL = getClass().getResource('/resources/' + path)
 
-// templorary disbaled thx to http://code.google.com/p/googleappengine/issues/detail?id=8415
-//long ifModifiedSince = request.getDateHeader("If-Modified-Since")
-//if (ifModifiedSince) {
-//    if (!CacheHelper.isModified(fileURL, ifModifiedSince)) {
-//        response.sendError HttpServletResponse.SC_NOT_MODIFIED
-//        response.setDateHeader("Last-Modified", ifModifiedSince)
-//        return
-//    }
-//}
-
-
+long ifModifiedSince = CacheHelper.getMillisFromHeaderDate(request.getHeader("If-Modified-Since"))
+if (ifModifiedSince) {
+    if (!CacheHelper.isModified(fileURL, ifModifiedSince)) {
+        response.sendError HttpServletResponse.SC_NOT_MODIFIED
+        response.setHeader("Last-Modified", CacheHelper.getHeaderDateFromMillis(ifModifiedSince))
+        return
+    }
+}
 
 try {
     response.contentType = MimeTypes.getTypeByFile(path)
     def bytes = fileURL.bytes
     response.contentLength = bytes.size()
-    response.setDateHeader('Last-Modified', CacheHelper.lastDeployment)
+    response.setHeader('Last-Modified', CacheHelper.getHeaderDateFromMillis(CacheHelper.lastDeployment))
     response.setHeader "Cache-Control", "max-age=${CacheHelper.resouceExpiration}"
-    response.setDateHeader "Expires", System.currentTimeMillis() + CacheHelper.resouceExpiration * 1000
+    response.setHeader "Expires", CacheHelper.getHeaderDateFromMillis(System.currentTimeMillis() + CacheHelper.resouceExpiration * 1000)
     sout << bytes
 } catch (Exception e){
     log.info(e.message)

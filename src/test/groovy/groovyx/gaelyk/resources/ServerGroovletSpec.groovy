@@ -1,13 +1,12 @@
 package groovyx.gaelyk.resources
 
-import groovyx.gaelyk.plugins.PluginsHandler
 
 class ServerGroovletSpec extends PluginGroovletSpec {
 
 	String getGroovletName() { 'groovyx/gaelyk/resources/server.groovy' }
 	
 	def setup(){
-		groovletInstance.request.getDateHeader = { 0 }
+		groovletInstance.request.getHeader = { CacheHelper.getHeaderDateFromMillis(0) }
 	}
 	
 	def "Serve file"(){

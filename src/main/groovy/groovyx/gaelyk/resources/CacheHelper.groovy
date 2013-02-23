@@ -16,6 +16,7 @@
 
  package groovyx.gaelyk.resources
 
+import java.text.SimpleDateFormat
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.zip.ZipException
@@ -27,9 +28,11 @@ import java.util.zip.ZipException
  */
 class CacheHelper {
 	
-	static long resouceExpiration = 24 * 60 * 60
-	static long lastDeployment = System.currentTimeMillis() + 365L * resouceExpiration * 1000
+	static final long resouceExpiration = 24 * 60 * 60
+	static final long lastDeployment = System.currentTimeMillis() + 365L * resouceExpiration * 1000
 	
+    static final SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US)
+    
 	static {
 		File libDir = new File("WEB-INF/lib")
 		if(libDir.exists()){
@@ -57,7 +60,7 @@ class CacheHelper {
 	 */
 	static long getLastModified(URL url){
         if(!url){
-            return lastDeployment;
+            return lastDeployment
         }
 		try {
 			JarFile jarFile = new JarFile(new File(getJarFilePath(url)))
@@ -70,6 +73,14 @@ class CacheHelper {
 			return lastDeployment
 		}
 	}
+    
+    static long getMillisFromHeaderDate(String headerDate){
+        httpDateFormat.parse(headerDate).time
+    }
+    
+    static String getHeaderDateFromMillis(long millis){
+        httpDateFormat.format(new Date(millis))
+    }
 	
 	private static getJarFilePath(URL url){
 		def urlString = url.toExternalForm()
@@ -80,5 +91,7 @@ class CacheHelper {
 		def urlString = url.toExternalForm()
 		return urlString[((urlString.indexOf("!")+2)..-1)]
 	}
+    
+    
 	
 }
