@@ -26,7 +26,7 @@ def path = params.path
 
 if(!path){
     response.status = HttpServletResponse.SC_BAD_REQUEST
-    sout << "Path not defined!"
+    out << "Path not defined!"
     return
 }
 
@@ -56,7 +56,7 @@ try {
 } catch (IOException e){
     log.info(e.message)
     response.status = HttpServletResponse.SC_NOT_FOUND
-    sout << "File not found!"
+    out << "File not found!"
 } catch (Exception e){
     log.warning e.message
     e.printStackTrace(out)

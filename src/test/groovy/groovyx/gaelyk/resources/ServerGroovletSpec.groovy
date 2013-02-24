@@ -10,12 +10,15 @@ class ServerGroovletSpec extends PluginGroovletSpec {
 	}
 	
 	def "Serve file"(){
+        StringWriter sw = new StringWriter()
+        PrintWriter pw = new PrintWriter(sw)
+        
 		when:
 		groovletInstance.params = params
-		
+		groovletInstance.out    = pw
 		groovletInstance.get()
 		
-		String result = sout.toString()
+		String result = sout.toString() ?: sw.toString()
 		
 		then:
 		result == output
