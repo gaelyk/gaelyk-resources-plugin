@@ -31,29 +31,36 @@ if(!path){
 }
 
 def fileURL = getClass().getResource('/resources/' + path)
-String iMSHeader = request.getHeader("If-Modified-Since")
+String iMSHeader = request.getHeader('If-Modified-Since')
 
 if (iMSHeader) {
     long ifModifiedSince = CacheHelper.getMillisFromHeaderDate(iMSHeader)
     if (!CacheHelper.isModified(fileURL, ifModifiedSince)) {
         response.sendError HttpServletResponse.SC_NOT_MODIFIED
-        response.setHeader("Last-Modified", CacheHelper.getHeaderDateFromMillis(ifModifiedSince))
+        response.setHeader('Last-Modified', CacheHelper.getHeaderDateFromMillis(ifModifiedSince))
         return
     }
 }
 
 try {
+    if(fileURL == null){
+        throw new IOException("File not found!")
+    }
     response.contentType = MimeTypes.getTypeByFile(path)
     def bytes = fileURL.bytes
     response.contentLength = bytes.size()
     response.setHeader('Last-Modified', CacheHelper.getHeaderDateFromMillis(CacheHelper.lastDeployment))
-    response.setHeader "Cache-Control", "max-age=${CacheHelper.resouceExpiration}"
-    response.setHeader "Expires", CacheHelper.getHeaderDateFromMillis(System.currentTimeMillis() + CacheHelper.resouceExpiration * 1000)
+    response.setHeader 'Cache-Control', "max-age=${CacheHelper.resouceExpiration}"
+    response.setHeader 'Expires', CacheHelper.getHeaderDateFromMillis(System.currentTimeMillis() + CacheHelper.resouceExpiration * 1000)
     sout << bytes
-} catch (Exception e){
+} catch (IOException e){
     log.info(e.message)
     response.status = HttpServletResponse.SC_NOT_FOUND
     sout << "File not found!"
+} catch (Exception e){
+    log.warning e.message
+    e.printStackTrace(out)
+    response.status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR
 }
 
 
