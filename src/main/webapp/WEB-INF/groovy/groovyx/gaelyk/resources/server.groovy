@@ -31,6 +31,13 @@ if(!path){
 }
 
 def fileURL = getClass().getResource('/resources/' + path)
+
+if(fileURL == null){
+    response.status = HttpServletResponse.SC_NOT_FOUND
+    sout << "File not found!"
+    return
+}
+
 String iMSHeader = request.getHeader('If-Modified-Since')
 
 if (iMSHeader) {
@@ -43,9 +50,6 @@ if (iMSHeader) {
 }
 
 try {
-    if(fileURL == null){
-        throw new IOException("File not found!")
-    }
     response.contentType = MimeTypes.getTypeByFile(path)
     def bytes = fileURL.bytes
     response.contentLength = bytes.size()
@@ -53,10 +57,6 @@ try {
     response.setHeader 'Cache-Control', "max-age=${CacheHelper.resouceExpiration}"
     response.setHeader 'Expires', CacheHelper.getHeaderDateFromMillis(System.currentTimeMillis() + CacheHelper.resouceExpiration * 1000)
     sout << bytes
-} catch (IOException e){
-    log.info(e.message)
-    response.status = HttpServletResponse.SC_NOT_FOUND
-    sout << "File not found!"
 } catch (Exception e){
     log.warning e.message
     e.printStackTrace(new PrintWriter(sout))
