@@ -69,7 +69,7 @@ class CacheHelper {
 				return lastDeployment
 			}
 			return entry.time
-		} catch(ZipException e){
+		} catch(ZipException | FileNotFoundException e){
 			return lastDeployment
 		}
 	}
