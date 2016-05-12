@@ -1,22 +1,21 @@
 buildscript {
-
     repositories {
-        mavenCentral()
+      maven {
+        url "https://plugins.gradle.org/m2/"
+      }
+      mavenCentral()
+      jcenter()
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-gaelyk-plugin:0.4.1'
-        classpath 'org.gradle.api.plugins:gradle-gae-plugin:0.7.6'
-		classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1'
+      classpath "gradle.plugin.org.gradle.api.plugins:gradle-gaelyk-plugin:0.7.1"
     }
 }
 
 apply from: 'https://raw.github.com/gaelyk/gaelyk/master/common.gradle'
-
-
+apply plugin: 'war'
+apply plugin: 'org.gaelyk'
 apply plugin: 'maven'
-apply plugin: 'gae'
-apply plugin: 'gaelyk'
 
 def pluginName = "gaelyk-resources"
 version = ext.gaelykLatestVersion
@@ -27,20 +26,22 @@ repositories {
 }
 
 dependencies {
-	groovy "org.codehaus.groovy:groovy-all:${ext.gaelykGroovyVersion}"
-	compile	"org.gaelyk:gaelyk:${ext.gaelykLatestVersion}", {
+	compile "org.codehaus.groovy:groovy-all:${project.ext.gaelykGroovyVersion}"
+	compile	"org.gaelyk:gaelyk:${project.ext.gaelykLatestVersion}", {
         changing = true
     }
-	testCompile "org.gaelyk:gaelyk-spock:${ext.gaelykSpockLatestVersion}", {
+	testCompile "org.gaelyk:gaelyk-spock:${project.ext.gaelykSpockLatestVersion}", {
         changing = true
     }
-    gaeSdk "com.google.appengine:appengine-java-sdk:${ext.gaelykAppEngineVersion}"
-    
-	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
-}
+    compile "com.google.appengine:appengine-api-stubs:${project.ext.gaelykAppEngineVersion}", {
+      force = true
+    }
+    compile "com.google.appengine:appengine-testing:${project.ext.gaelykAppEngineVersion}", {
+      force = true
+    }
+    appengineSdk "com.google.appengine:appengine-java-sdk:${project.ext.gaelykAppEngineVersion}"
 
-gae {
-    optimizeWar = true
+	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
 }
 
 
@@ -48,8 +49,7 @@ jar {
 	baseName pluginName
 }
 
-jar.dependsOn gaelykPrecompileTemplate
-jar.dependsOn gaelykPrecompileGroovlet
+jar.dependsOn gaelykPrecompileTemplates
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
 	baseName = pluginName
@@ -80,11 +80,11 @@ println "Signing is ${signingEnabled ? 'enabled' : 'disabled'}"
 if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
     if(signingEnabled){
         apply plugin: 'signing'
-            
+
         signing {
             sign configurations.gaelykPlugin
         }
-        
+
         uploadGaelykPlugin.dependsOn signGaelykPlugin
     }
 
@@ -94,7 +94,7 @@ if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
                 if(signingEnabled){
                     beforeDeployment { MavenDeployment deployment ->
                         signing.signPom(deployment)
-                    }                    
+                    }
                 }
 
 				def auth = {
@@ -152,4 +152,3 @@ if(hasProperty('nexusUsername') && hasProperty('nexusPassword')){
 }
 
 jar.enabled = true
-
