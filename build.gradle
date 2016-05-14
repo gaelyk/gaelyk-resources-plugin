@@ -33,12 +33,8 @@ dependencies {
 	testCompile "org.gaelyk:gaelyk-spock:${project.ext.gaelykSpockLatestVersion}", {
         changing = true
     }
-    compile "com.google.appengine:appengine-api-stubs:${project.ext.gaelykAppEngineVersion}", {
-      force = true
-    }
-    compile "com.google.appengine:appengine-testing:${project.ext.gaelykAppEngineVersion}", {
-      force = true
-    }
+    compile "com.google.appengine:appengine-api-stubs:${project.ext.gaelykAppEngineVersion}"
+    compile "com.google.appengine:appengine-testing:${project.ext.gaelykAppEngineVersion}"
     appengineSdk "com.google.appengine:appengine-java-sdk:${project.ext.gaelykAppEngineVersion}"
 
 	testCompile files('src/test/resources/WEB-INF/lib/test-gaelyk-resources-plugin.jar')
